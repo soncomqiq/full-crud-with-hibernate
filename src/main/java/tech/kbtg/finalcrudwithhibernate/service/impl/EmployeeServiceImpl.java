@@ -2,45 +2,52 @@ package tech.kbtg.finalcrudwithhibernate.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import tech.kbtg.finalcrudwithhibernate.dao.EmployeeDAO;
 import tech.kbtg.finalcrudwithhibernate.entity.Employee;
+import tech.kbtg.finalcrudwithhibernate.repository.EmployeeRepository;
 import tech.kbtg.finalcrudwithhibernate.service.EmployeeService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService
 {
-	private EmployeeDAO employeeDAO;
+	private EmployeeRepository employeeRepository;
 
-	public EmployeeServiceImpl( EmployeeDAO employeeDAO )
+	public EmployeeServiceImpl( EmployeeRepository employeeRepository )
 	{
-		this.employeeDAO = employeeDAO;
+		this.employeeRepository = employeeRepository;
 	}
 
 	@Override
 	public List < Employee > findAll()
 	{
-		return employeeDAO.findAll();
+		return employeeRepository.findAll();
 	}
 
 	@Override
-	@Transactional
 	public Employee save( Employee employee )
 	{
-		return employeeDAO.save( employee );
+		return employeeRepository.save( employee );
 	}
 
 	@Override
 	public Employee findById( Integer id )
 	{
-		return employeeDAO.findById( id );
+		Optional < Employee > employeeOptional = employeeRepository.findById( id );
+		if ( employeeOptional.isPresent() )
+		{
+			return employeeOptional.get();
+		}
+		else
+		{
+			throw new RuntimeException( "Didn't find Employee ID - " + id );
+		}
 	}
 
 	@Override
-	@Transactional
 	public void deleteById( Integer id )
 	{
-		employeeDAO.deleteById( id );
+		employeeRepository.deleteById( id );
 	}
 }
